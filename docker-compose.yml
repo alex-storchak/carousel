@@ -17,8 +17,10 @@ services:
   nginx:
     build:
       context: ./docker/nginx
+      args:
+        SITE_NAME: ${FRONTEND_HOST}
     environment:
-      - VIRTUAL_HOST=be-chadd.ru.local,backend.be-chadd.ru.local
+      - VIRTUAL_HOST=${FRONTEND_HOST},${BACKEND_HOST}
     depends_on:
       - proxy
       - php
@@ -46,6 +48,8 @@ services:
       - proxy
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
+    env_file:
+      - ./docker/env/${ENV}/mysql.env
     environment:
       MYSQL_ROOT_PASSWORD: root
     networks:
@@ -55,11 +59,11 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     depends_on:
       - proxy
+    env_file:
+      - ./docker/env/${ENV}/phpmyadmin.env
     environment:
-      - VIRTUAL_HOST=phpmyadmin.be-chadd.ru.local
+      - VIRTUAL_HOST=phpmyadmin.${FRONTEND_HOST}
       - PMA_HOST=mysql
-      - PMA_USER=root
-      - PMA_PASSWORD=root
     networks:
       - frontend
       - backend

@@ -1,6 +1,8 @@
 FROM nginx:1.18
 
-RUN mkdir -p /var/log/nginx/be-chadd.ru.local
+ARG SITE_NAME
+
+RUN mkdir -p /var/log/nginx/${SITE_NAME}
 
 EXPOSE 80 443
 
