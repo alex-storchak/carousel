@@ -5,6 +5,11 @@ RUN apt-get update && apt-get install -y \
         wget \
         git
 
+ARG PHP_XDEBUG_ENABLE
+
+# Enable xdebug by ENV variable
+RUN if [ 0 -ne "${PHP_XDEBUG_ENABLE:-0}" ] ; then docker-php-ext-enable xdebug && echo "Enabled xdebug" ; fi
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/html
