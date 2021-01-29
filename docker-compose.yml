@@ -13,7 +13,7 @@ services:
 
   nginx:
     build:
-      context: ./docker/nginx
+      context: docker/env/${ENV}/nginx
       args:
         SITE_NAME: ${FRONTEND_HOST}
     environment:
@@ -22,7 +22,7 @@ services:
       - proxy
       - php
     volumes:
-      - ./docker/nginx/conf.d/default.nginx:/etc/nginx/conf.d/default.conf
+      - ./docker/env/${ENV}/nginx/conf.d/default.nginx:/etc/nginx/conf.d/default.conf
       - ./:/var/www/html/
     networks:
       - frontend
@@ -30,16 +30,16 @@ services:
 
   php:
     build:
-      context: ./docker/php
+      context: ./docker/env/${ENV}/php
       args:
         PHP_XDEBUG_ENABLE: ${PHP_XDEBUG_ENABLE}
     depends_on:
       - proxy
     env_file:
-      - ./docker/env/${ENV}/php.env
+      - ./docker/env/${ENV}/php/php.env
     volumes:
-      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
-      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./docker/env/${ENV}/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/env/${ENV}/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./:/var/www/html/
     networks:
       - backend
@@ -49,9 +49,9 @@ services:
     depends_on:
       - proxy
     volumes:
-      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/env/${ENV}/mysql/data:/var/lib/mysql
     env_file:
-      - ./docker/env/${ENV}/mysql.env
+      - ./docker/env/${ENV}/mysql/mysql.env
     environment:
       MYSQL_ROOT_PASSWORD: root
     networks:
@@ -62,7 +62,7 @@ services:
     depends_on:
       - proxy
     env_file:
-      - ./docker/env/${ENV}/phpmyadmin.env
+      - ./docker/env/${ENV}/phpmyadmin/phpmyadmin.env
     environment:
       - VIRTUAL_HOST=phpmyadmin.${FRONTEND_HOST}
       - PMA_HOST=mysql
