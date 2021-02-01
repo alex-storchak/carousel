@@ -50,10 +50,14 @@ services:
       - proxy
     volumes:
       - ./docker/env/${ENV}/mysql/data:/var/lib/mysql
+      - ./docker/env/${ENV}/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ./docker/env/${ENV}/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 12345:3306
     env_file:
       - ./docker/env/${ENV}/mysql/mysql.env
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - backend
 
